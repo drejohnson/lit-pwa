@@ -1,0 +1,25 @@
+{
+  "name": "lit-html-meiosis-pattern",
+  "version": "1.0.0",
+  "description": "Experimenting with lit-html and the meiosis pattern",
+  "main": "index.html",
+  "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html",
+    "workbox": "workbox generateSW ./workbox-config.js"
+  },
+  "dependencies": {
+    "@polymer/lit-element": "0.5.1",
+    "conditioner-js": "1.2.3",
+    "cxs": "6.2.0",
+    "flyd": "0.2.6",
+    "headful": "1.0.3",
+    "lit-html": "0.10.0",
+    "navigation": "5.0.1",
+    "pwa-helpers": "0.8.2"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.8.1"
+  },
+  "keywords": ["frameworkless", "lit-html", "meiosis"]
+}
