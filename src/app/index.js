@@ -6,7 +6,9 @@ import headful from "headful";
 
 headful({
   title: "Lit-Html Meiosis Example",
-  description: "Experimenting with lit-html and the meiosis pattern"
+  description: "Experimenting with lit-html and the meiosis pattern",
+  image: 'images/manifest/icon-192x192.png',
+  lang: 'en'
 });
 
 const view = cxs({
