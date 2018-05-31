@@ -13,7 +13,7 @@ workbox.setConfig({
 });
 
 // Want offline analytics for your offline PWA
-workbox.googleAnalytics.initialize();
+// workbox.googleAnalytics.initialize();
 
 workbox.routing.registerRoute(
   new RegExp("https://fonts.gstatic.com/(.*)"),
