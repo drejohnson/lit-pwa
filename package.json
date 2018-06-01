@@ -2,19 +2,17 @@
   "name": "lit-html-meiosis-pattern",
   "version": "1.0.0",
   "description": "Experimenting with lit-html and the meiosis pattern",
-  "main": "index.html",
   "scripts": {
-    "start": "parcel public/index.html",
-    "build": "parcel build public/index.html",
+    "start": "serve -s dist",
+    "dev": "webpack-serve ./webpack.config.js",
+    "build": "NODE_ENV=production webpack",
     "prebuild": "npm run clean:dist",
     "postbuild": "concurrently \"yarn copy:public\" \"yarn workbox\" ",
     "copy:public": "node tools/copy.js",
     "clean:dist": "node tools/clean.js",
-    "critical": "node tools/critical.js",
     "workbox": "workbox generateSW ./workbox-config.js"
   },
   "dependencies": {
-    "@polymer/lit-element": "0.5.1",
     "conditioner-js": "1.2.3",
     "cxs": "6.2.0",
     "flyd": "0.2.6",
@@ -24,9 +22,24 @@
     "pwa-helpers": "0.8.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0-beta.49",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.49",
+    "@babel/preset-env": "^7.0.0-beta.49",
+    "babel-loader": "^8.0.0-beta",
     "concurrently": "^3.5.1",
+    "connect-history-api-fallback": "^1.5.0",
+    "critters-webpack-plugin": "^1.0.0",
+    "file-loader": "^1.1.11",
     "fs-extra": "^6.0.1",
-    "parcel-bundler": "^1.8.1"
+    "html-webpack-plugin": "^3.2.0",
+    "koa-connect": "^2.0.1",
+    "script-ext-html-webpack-plugin": "^2.0.1",
+    "uglifyjs-webpack-plugin": "^1.2.5",
+    "url-loader": "^1.0.1",
+    "webpack": "^4.10.2",
+    "webpack-cli": "^2.1.4",
+    "webpack-serve": "^1.0.2",
+    "webpackbar": "^2.6.1"
   },
   "keywords": [
     "frameworkless",
