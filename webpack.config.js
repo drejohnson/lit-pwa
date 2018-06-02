@@ -3,9 +3,7 @@ const history = require('connect-history-api-fallback');
 const convert = require('koa-connect');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ScriptExtHtmlPlugin = require('script-ext-html-webpack-plugin');
-const Critters = require('critters-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const WebpackBar = require('webpackbar');
 const webpack = require('webpack');
 
@@ -79,7 +77,6 @@ module.exports = {
       inject: true,
       template: './public/index.html'
     }),
-    // new Critters({}),
     new ScriptExtHtmlPlugin({
       defaultAttribute: 'defer',
       module: ['app'],
