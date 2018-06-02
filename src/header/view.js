@@ -1,7 +1,7 @@
 import { html } from "lit-html/lib/lit-extended";
 import cxs from "cxs";
 
-export const createView = _model => {
+const createView = _model => {
   const header = cxs({
     height: "60px",
     padding: "0 1rem",
@@ -16,3 +16,5 @@ export const createView = _model => {
   </header>
 `;
 };
+
+export default createView;

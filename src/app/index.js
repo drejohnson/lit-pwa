@@ -1,6 +1,6 @@
 import { html } from 'lit-html/lib/lit-extended';
-import { createHeader } from '../header';
-import { createCounter } from '../counter';
+import createHeader from '../header';
+import createCounter from '../counter';
 import cxs from 'cxs';
 import headful from 'headful';
 
@@ -18,7 +18,7 @@ const view = cxs({
   padding: '1rem'
 });
 
-export const createApp = update => {
+const createApp = update => {
   const header = createHeader();
   const counter = createCounter(update);
 
@@ -35,3 +35,5 @@ export const createApp = update => {
     }
   };
 };
+
+export default createApp;

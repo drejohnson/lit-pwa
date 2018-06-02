@@ -1,5 +1,7 @@
-import { createView } from "./view";
+import createView from "./view";
 
-export const createHeader = _update => ({
+const createHeader = _update => ({
   view: createView()
 });
+
+export default createHeader;

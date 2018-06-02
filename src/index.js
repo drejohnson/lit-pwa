@@ -1,7 +1,7 @@
 import flyd from "flyd";
 import { render } from "lit-html/lib/lit-extended";
 
-import { createApp } from "./app";
+import createApp from "./app";
 
 const update = flyd.stream();
 const app = createApp(update);

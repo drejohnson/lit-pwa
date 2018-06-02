@@ -27,7 +27,7 @@ const button = cxs({
   cursor: "pointer"
 });
 
-export const createView = actions => model => html`
+const createView = actions => model => html`
   <div>
     <h1>
       <span>Counter: </span>
@@ -47,3 +47,5 @@ export const createView = actions => model => html`
     </div>
   </div>
 `;
+
+export default createView;
