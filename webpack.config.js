@@ -10,8 +10,9 @@ const webpack = require('webpack');
 const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
+  target: 'web',
   entry: {
-    app: './src/index.js',
+    app: './src/index.js'
   },
   mode: isProd ? 'production' : 'development',
   output: {
@@ -20,25 +21,35 @@ module.exports = {
     publicPath: '/'
   },
   resolve: {
-    extensions: ['.js', '.scss', '.sass', '.css', '.html'],
-    alias: {
-      '~': './src',
-    },
-    modules: ['./src', 'node_modules'],
+    extensions: ['.js'],
+    modules: ['./src', 'node_modules']
   },
   module: {
     rules: [
-      // {
-      //   test: /\.js$/,
-      //   exclude: /node_modules/,
-      //   use: {
-      //     loader: 'babel-loader',
-      //     options: {
-      //       presets: ['@babel/preset-env'],
-      //       plugins: [require('@babel/plugin-syntax-dynamic-import')]
-      //     }
-      //   }
-      // },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  targets: {
+                    browsers: ['>0.25%', 'not ie 11', 'not op_mini all'],
+                    esmodules: true
+                  }
+                }
+              ]
+            ],
+            plugins: [
+              require('@babel/plugin-syntax-dynamic-import'),
+              require('@babel/plugin-proposal-pipeline-operator')
+            ]
+          }
+        }
+      },
       {
         test: /\.(jpe?g|png|gif|svg)$/,
         use: [
@@ -71,7 +82,7 @@ module.exports = {
         useShortDoctype: isProd,
         minifyCSS: isProd,
         minifyJS: isProd,
-        caseSensitive: isProd,
+        caseSensitive: isProd
       },
       hash: isProd,
       inject: true,
@@ -79,31 +90,35 @@ module.exports = {
     }),
     new ScriptExtHtmlPlugin({
       defaultAttribute: 'defer',
-      module: ['app'],
+      module: ['app']
     }),
     new WebpackBar(),
     ...(isProd
       ? [
-        new webpack.DefinePlugin({
-          'process.env.NODE_ENV': JSON.stringify('production')
-        })
-        // new BundleAnalyzerPlugin({ openAnalyzer: false })
-      ]
+          new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('production')
+          })
+          // new BundleAnalyzerPlugin({ openAnalyzer: false })
+        ]
       : [
-        new webpack.DefinePlugin({
-          'process.env.NODE_ENV': JSON.stringify('development')
-        })
-      ])
+          new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('development')
+          })
+        ])
   ],
   optimization: {
+    nodeEnv: 'production',
+    concatenateModules: true,
     minimizer: [
       new UglifyJsPlugin({
+        uglifyOptions: { ecma: 6, compress: false },
         cache: true,
-        parallel: true,
+        // parallel: true,
         sourceMap: true // set to true if you want JS source maps
-      }),
+      })
     ],
     splitChunks: {
+      chunks: 'all',
       cacheGroups: {
         commons: {
           test: /node_modules/,

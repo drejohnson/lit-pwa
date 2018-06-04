@@ -1,5 +1,5 @@
-import createActions from "./actions";
-import createView from "./view";
+import createActions from './actions';
+import createView from './view';
 
 const createCounter = update => ({
   model: () => ({

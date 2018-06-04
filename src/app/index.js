@@ -1,8 +1,14 @@
 import { html } from 'lit-html/lib/lit-extended';
+import { createNavigator } from '../navigator';
 import createHeader from '../header';
 import createCounter from '../counter';
+import createHome from '../home';
+import createAbout from '../about';
+import createNotFound from '../notFound';
 import cxs from 'cxs';
 import headful from 'headful';
+
+import { HomePage, AboutPage, NotFoundPage } from '../constants';
 
 headful({
   title: 'Lit-Html Meiosis Example',
@@ -19,17 +25,40 @@ const view = cxs({
 });
 
 const createApp = update => {
-  const header = createHeader();
+  const navigator = createNavigator(update);
   const counter = createCounter(update);
 
+  navigator.register([
+    { key: HomePage, component: createHome(navigator)(update), route: '/' },
+    {
+      key: AboutPage,
+      component: createAbout(navigator)(update),
+      route: '/about'
+    },
+    {
+      key: NotFoundPage,
+      component: createNotFound(navigator)(update),
+      route: '{*x}',
+      defaultTypes: { x: 'stringarray' },
+      trackTypes: false
+    }
+  ]);
+
+  navigator.start();
+
+  const header = createHeader(navigator)(update);
+
   return {
+    navigator,
+
     model: () => Object.assign({}, counter.model()),
 
     view: model => {
+      const component = navigator.getComponent(model.pageId);
       return html`
-      ${header.view}
+      ${header.view()}
       <div className=${view}>
-        ${counter.view(model)}
+        ${component.view(model)}
       </div>
     `;
     }
