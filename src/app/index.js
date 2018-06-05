@@ -2,9 +2,6 @@ import { html } from 'lit-html/lib/lit-extended';
 import { createNavigator } from '../navigator';
 import createHeader from '../header';
 import createCounter from '../counter';
-// import createHome from '../home';
-// import createAbout from '../about';
-// import createNotFound from '../notFound';
 import cxs from 'cxs';
 import headful from 'headful';
 
