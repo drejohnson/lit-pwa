@@ -4,6 +4,7 @@ const convert = require('koa-connect');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ScriptExtHtmlPlugin = require('script-ext-html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 const WebpackBar = require('webpackbar');
 const webpack = require('webpack');
 
@@ -17,6 +18,7 @@ module.exports = {
   mode: isProd ? 'production' : 'development',
   output: {
     path: path.resolve(__dirname, './dist'),
+    chunkFilename: !isProd ? '[name].js' : '[name].[chunkhash:8].js',
     filename: !isProd ? '[name].js' : '[name].[chunkhash:8].js',
     publicPath: '/'
   },
@@ -44,10 +46,7 @@ module.exports = {
                   }
                 ]
               ],
-              plugins: [
-                require('@babel/plugin-syntax-dynamic-import'),
-                require('@babel/plugin-proposal-pipeline-operator')
-              ]
+              plugins: [require('@babel/plugin-syntax-dynamic-import')]
             }
           }
         ]
@@ -99,6 +98,78 @@ module.exports = {
       ? [
           new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production')
+          }),
+          new WorkboxPlugin.GenerateSW({
+            swDest: 'sw.js',
+            clientsClaim: true,
+            skipWaiting: true,
+            // Exclude images from the precache
+            exclude: [/\.(?:png|jpg|jpeg|svg|ico|webp)$/],
+            // Define runtime caching rules.
+            runtimeCaching: [
+              {
+                urlPattern: /^(https?.*)/,
+                handler: 'networkFirst',
+                options: {
+                  cacheName: 'cache-https',
+                  expiration: {
+                    maxEntries: 50
+                  },
+                  networkTimeoutSeconds: 3
+                }
+              },
+              {
+                urlPattern: new RegExp('https://fonts.googleapis.com/(.*)'),
+                // Apply a cache-first strategy.
+                handler: 'cacheFirst',
+                options: {
+                  cacheName: 'googleapis',
+                  expiration: {
+                    maxEntries: 50
+                  }
+                }
+              },
+              {
+                // Match any request ends with .png, .jpg, .jpeg or .svg.
+                urlPattern: /\.(?:png|jpg|jpeg|svg)$/,
+
+                // Apply a cache-first strategy.
+                handler: 'cacheFirst',
+
+                options: {
+                  cacheName: 'images-cache',
+                  // Only cache 10 images.
+                  expiration: {
+                    maxEntries: 60,
+                    maxAgeSeconds: 30 * 24 * 60 * 60 // 30 Days
+                  },
+                  cacheableResponse: {
+                    statuses: [0, 200]
+                  }
+                }
+              },
+              {
+                urlPattern: /\.(?:js|css)$/,
+                handler: 'staleWhileRevalidate',
+                options: {
+                  cacheName: 'static-resources'
+                }
+              },
+              {
+                urlPattern: /.*(?:googleapis)\.com.*$/,
+                handler: 'staleWhileRevalidate',
+                options: {
+                  cacheName: 'googleapis-cache'
+                }
+              },
+              {
+                urlPattern: /.*(?:gstatic)\.com.*$/,
+                handler: 'staleWhileRevalidate',
+                options: {
+                  cacheName: 'gstatic-cache'
+                }
+              }
+            ]
           })
           // new BundleAnalyzerPlugin({ openAnalyzer: false })
         ]
@@ -113,7 +184,7 @@ module.exports = {
     concatenateModules: true,
     minimizer: [
       new UglifyJsPlugin({
-        uglifyOptions: { ecma: 6, compress: false },
+        uglifyOptions: { ecma: 6 },
         cache: true,
         // parallel: true,
         sourceMap: true // set to true if you want JS source maps
