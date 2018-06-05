@@ -1,15 +1,13 @@
 import { html } from 'lit-html/lib/lit-extended';
-import loadable from '../utils/loadable';
-import createCounter from '../counter';
+import loadable from '../loadable';
 
 const createHome = navigator => update => {
-  const counter = createCounter(update);
+  const counter = loadable('counter').then(v => v(update));
   return {
-    model: () => Object.assign({}, counter.model()),
     view: model => html`
       <div>
         <h1>Home</h1>
-        ${counter.view(model)}
+        ${counter.then(c => c.view(model))}
       </div>
     `
   };

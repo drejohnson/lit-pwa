@@ -2,12 +2,13 @@ import { html } from 'lit-html/lib/lit-extended';
 import { createNavigator } from '../navigator';
 import createHeader from '../header';
 import createCounter from '../counter';
-import createHome from '../home';
-import createAbout from '../about';
-import createNotFound from '../notFound';
+// import createHome from '../home';
+// import createAbout from '../about';
+// import createNotFound from '../notFound';
 import cxs from 'cxs';
 import headful from 'headful';
 
+import loadable from '../loadable';
 import { HomePage, AboutPage, NotFoundPage } from '../constants';
 
 headful({
@@ -26,18 +27,25 @@ const view = cxs({
 
 const createApp = update => {
   const navigator = createNavigator(update);
-  const counter = createCounter(update);
+
+  const createHome = loadable('home').then(v => v(navigator)(update));
+  const createAbout = loadable('about').then(v => v(navigator)(update));
+  const createNotFound = loadable('notFound').then(v => v(navigator)(update));
 
   navigator.register([
-    { key: HomePage, component: createHome(navigator)(update), route: '/' },
+    {
+      key: HomePage,
+      component: createHome,
+      route: '/'
+    },
     {
       key: AboutPage,
-      component: createAbout(navigator)(update),
+      component: createAbout,
       route: '/about'
     },
     {
       key: NotFoundPage,
-      component: createNotFound(navigator)(update),
+      component: createNotFound,
       route: '{*x}',
       defaultTypes: { x: 'stringarray' },
       trackTypes: false
@@ -46,19 +54,19 @@ const createApp = update => {
 
   navigator.start();
 
-  const header = createHeader(navigator)(update);
-
   return {
     navigator,
 
-    model: () => Object.assign({}, counter.model()),
+    model: () => Object.assign({}, createCounter(update).model()),
 
     view: model => {
+      const header = createHeader(navigator)(update);
       const component = navigator.getComponent(model.pageId);
+      const view = component.then(c => c.view(model));
       return html`
       ${header.view()}
       <div className=${view}>
-        ${component.view(model)}
+        ${view}
       </div>
     `;
     }
