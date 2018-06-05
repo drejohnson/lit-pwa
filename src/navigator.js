@@ -1,32 +1,32 @@
-import Navigo from 'navigo';
+import { HTML5HistoryManager, StateNavigator } from 'navigation';
 
 export const createNavigator = update => {
-  const router = new Navigo(null);
+  let stateNavigator = null;
   const componentMap = {};
-  const routes = {};
 
   return {
     register: configs => {
+      stateNavigator = new StateNavigator(configs, new HTML5HistoryManager());
       configs.forEach(config => {
         const component = config.component;
         componentMap[config.key] = component;
-        routes[config.route] = {
-          as: config.key,
-          uses: params => {
-            if (component.navigating) {
-              component.navigating(params);
-            } else {
-              update(model =>
-                Object.assign(model, { pageId: config.key, params })
-              );
-            }
-          }
-        };
+        if (component.navigating) {
+          stateNavigator.states[config.key].navigating = component.navigating;
+        }
+      });
+      stateNavigator.onNavigate(() => {
+        const { data, asyncData, state } = stateNavigator.stateContext;
+        update(model =>
+          Object.assign(model, data, asyncData, {
+            pageId: state.key,
+            params: data
+          })
+        );
       });
     },
     getComponent: pageId => componentMap[pageId],
-    getLink: (id, params) => router.generate(id, params),
-    navigateTo: (id, params) => router.navigate(router.generate(id, params)),
-    start: () => router.on(routes).resolve()
+    getLink: (id, params) => stateNavigator.getNavigationLink(id, params),
+    navigateTo: (id, params) => stateNavigator.navigate(id, params),
+    start: () => stateNavigator.start()
   };
 };
